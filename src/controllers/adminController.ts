@@ -1,3 +1,5 @@
+import { Request, Response } from 'express';
+import { User } from '../models/User.js';
 // Buscar todos os usuários da empresa do usuário autenticado
 export const buscarUsuariosEmpresa = async (req: Request, res: Response) => {
   try {
@@ -9,8 +11,6 @@ export const buscarUsuariosEmpresa = async (req: Request, res: Response) => {
     res.status(500).json({ success: false, message: 'Erro ao buscar usuários da empresa.' });
   }
 };
-import { Request, Response } from 'express';
-import { User } from '../models/User.js';
 
 export const getUsers = async (req: Request, res: Response) => {
   try {

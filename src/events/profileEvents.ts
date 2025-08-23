@@ -26,7 +26,7 @@ export function registrarEventosPerfil(socket: SocketWithAuth, io: Namespace): v
       // Atualizar dados do usuário
       usuario.name = name;
       usuario.email = email;
-      
+
       // Atualizar imagem de perfil se fornecida
       if (profileImage !== undefined) {
         // Validar imagem se for fornecida
@@ -39,17 +39,16 @@ export function registrarEventosPerfil(socket: SocketWithAuth, io: Namespace): v
         }
         usuario.profileImage = profileImage;
       }
-      
+
       // Apenas administradores podem editar a empresa
       if (empresa !== undefined && usuario.tipoUsuario === 'admin') {
         usuario.empresa = empresa;
       }
-      // Para usuários não-admin, o campo empresa permanece inalterado
-      // Não precisamos fazer nada, pois o campo já existe no usuário
-      
+      // Para usuários não-admin, o campo empresa permanece inalterado e não visível
+
       await usuario.save();
 
-      socket.emit('atualizacao_perfil_sucesso', { 
+      socket.emit('atualizacao_perfil_sucesso', {
         message: 'Perfil atualizado com sucesso!',
         user: {
           id: usuario._id.toString(),
@@ -140,10 +139,10 @@ export function registrarEventosPerfil(socket: SocketWithAuth, io: Namespace): v
   });
 
   // Atualizar permissões de um usuário (apenas para usuários principais)
-  socket.on('atualizar_permissoes_usuario', async (dados: { 
-    userId: string; 
-    permissions: any; 
-    tipoUsuario: string 
+  socket.on('atualizar_permissoes_usuario', async (dados: {
+    userId: string;
+    permissions: any;
+    tipoUsuario: string
   }) => {
     try {
       if (!socket.userId) {
@@ -180,11 +179,11 @@ export function registrarEventosPerfil(socket: SocketWithAuth, io: Namespace): v
 
       // Verificar se está tentando criar outro usuário principal
       if (tipoUsuario === 'principal' && usuarioParaAlterar.tipoUsuario !== 'principal') {
-        const usuariosPrincipais = await User.countDocuments({ 
-          empresa: socket.userEmpresa, 
-          tipoUsuario: 'principal' 
+        const usuariosPrincipais = await User.countDocuments({
+          empresa: socket.userEmpresa,
+          tipoUsuario: 'principal'
         });
-        
+
         if (usuariosPrincipais >= 1) {
           socket.emit('erro_servidor', { message: 'Apenas um usuário pode ter o tipoUsuario principal' });
           return;

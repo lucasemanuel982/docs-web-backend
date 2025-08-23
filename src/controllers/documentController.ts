@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
-import { Document } from '../models/Document';
-import { User } from '../models/User';
-import { Socket } from 'socket.io';
+import { Document } from '../models/Document.js';
+import { User } from '../models/User.js';
 
 
 // Listar documentos do usuário autenticado
@@ -58,7 +57,7 @@ export async function createDocument(req: Request, res: Response) {
       readPermissions: [userId],
       editPermissions: [userId]
     });
-  res.status(201).json({ document: doc });
+    res.status(201).json({ document: doc });
   } catch (err) {
     res.status(500).json({ message: 'Erro ao criar documento', error: err });
   }

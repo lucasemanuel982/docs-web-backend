@@ -1,3 +1,14 @@
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { Request, Response } from 'express';
+import { User } from '../models/User.js';
+import { PasswordReset } from '../models/PasswordReset.js';
+import { adicionarSessao, removerSessao, obterSocketId, obterTodasSessoes } from '../utils/sessoesAtivas.js';
+import { LoginRequest, RegisterRequest, JWTPayload, ApiResponse } from '../types/index.js';
+import { validateBase64Image } from '../utils/imageValidation.js';
+import { sendPasswordResetEmail } from '../utils/email.js';
+import crypto from 'crypto';
+
 // Atualizar perfil do usuário
 export const updateProfile = async (req: Request, res: Response) => {
   try {
@@ -43,16 +54,7 @@ export const updatePassword = async (req: Request, res: Response) => {
     res.status(500).json({ success: false, message: 'Erro ao atualizar senha' });
   }
 };
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import { Request, Response } from 'express';
-import { User } from '../models/User.js';
-import { PasswordReset } from '../models/PasswordReset.js';
-import { adicionarSessao, removerSessao, obterSocketId, obterTodasSessoes } from '../utils/sessoesAtivas.js';
-import { LoginRequest, RegisterRequest, JWTPayload, ApiResponse } from '../types/index.js';
-import { validateBase64Image } from '../utils/imageValidation.js';
-import { sendPasswordResetEmail } from '../utils/email.js';
-import crypto from 'crypto';
+
 
 export const login = async (req: Request, res: Response) => {
   try {
@@ -299,10 +301,9 @@ export const resetPassword = async (req: Request, res: Response) => {
 
     // Enviar email de confirmação (opcional)
     try {
-      // await sendPasswordChangedEmail(usuario.email); // Implementar se necessário
+      // await sendPasswordChangedEmail(usuario.email); // Implementar futuramente
     } catch (emailError) {
       console.error('Erro ao enviar email de confirmação:', emailError);
-      // Não falhar a operação se o email de confirmação falhar
     }
 
     res.status(200).json({

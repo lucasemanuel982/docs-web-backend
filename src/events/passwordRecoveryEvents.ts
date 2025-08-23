@@ -7,7 +7,7 @@ import { sendPasswordResetEmail } from '../utils/email.js';
 
 export function registrarEventosRecuperacaoSenha(socket: Socket): void {
   console.log('Eventos de recuperação de senha registrados para socket:', socket.id);
-  
+
   socket.on('solicitar_recuperacao_senha', async (dados: { email: string }) => {
     console.log('Solicitação de recuperação de senha recebida:', dados.email);
     try {
@@ -19,7 +19,7 @@ export function registrarEventosRecuperacaoSenha(socket: Socket): void {
       if (usuario) {
         // Gera um token seguro
         const token = crypto.randomBytes(32).toString('hex');
-        
+
         // Define o prazo de validade para 3 minutos a partir de agora
         const expiresAt = new Date(Date.now() + 3 * 60 * 1000);
 
@@ -69,7 +69,7 @@ export function registrarEventosRecuperacaoSenha(socket: Socket): void {
       // Encontra o usuário associado ao e-mail do token
       const usuario = await User.findOne({ email: passwordReset.email });
       if (!usuario) {
-        // Embora improvável, é uma verificação de segurança adicional
+        // Verificação de segurança adicional
         return socket.emit('redefinicao_erro', { message: 'Usuário não encontrado.' });
       }
 

@@ -33,8 +33,6 @@ const passwordResetSchema = new mongoose.Schema<IPasswordReset>({
 
 // Criar índices
 passwordResetSchema.index({ email: 1 });
-// Removendo o índice duplicado - o unique: true já cria o índice
-// passwordResetSchema.index({ token: 1 }, { unique: true });
 passwordResetSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 }); // TTL index
 
 export const PasswordReset = mongoose.model<IPasswordReset>('PasswordReset', passwordResetSchema); 

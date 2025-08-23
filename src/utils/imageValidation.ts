@@ -24,7 +24,7 @@ export function validateBase64Image(base64String: string): ImageValidationResult
     }
 
     // Verificar se começa com um tipo MIME válido
-    const isValidMimeType = IMAGE_VALIDATION.VALID_MIME_TYPES.some(mimeType => 
+    const isValidMimeType = IMAGE_VALIDATION.VALID_MIME_TYPES.some(mimeType =>
       base64String.startsWith(mimeType)
     );
 
@@ -40,22 +40,18 @@ export function validateBase64Image(base64String: string): ImageValidationResult
 
     // Calcular tamanho em bytes
     const sizeInBytes = Math.ceil((base64Data.length * 3) / 4);
-    
+
     // Verificar tamanho
     if (sizeInBytes > IMAGE_VALIDATION.MAX_SIZE_BYTES) {
-      return { 
-        isValid: false, 
+      return {
+        isValid: false,
         error: `Imagem muito grande. Máximo permitido: ${formatBytes(IMAGE_VALIDATION.MAX_SIZE_BYTES)}`,
         size: sizeInBytes
       };
     }
 
-    // Para validação de dimensões, seria necessário decodificar a imagem
-    // Por simplicidade, vamos apenas validar o tamanho por enquanto
-    // Em uma implementação mais robusta, você poderia usar uma biblioteca como 'sharp' ou 'jimp'
-
-    return { 
-      isValid: true, 
+    return {
+      isValid: true,
       size: sizeInBytes
     };
 
@@ -80,13 +76,11 @@ function formatBytes(bytes: number): string {
  */
 export function isValidBase64(str: string): boolean {
   try {
-    // Verificar se é uma string válida
     if (typeof str !== 'string') return false;
-    
-    // Verificar se contém apenas caracteres válidos de base64
+
     const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
     const base64Data = str.split(',')[1] || str;
-    
+
     return base64Regex.test(base64Data);
   } catch {
     return false;
