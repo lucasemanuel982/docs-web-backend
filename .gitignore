@@ -1,0 +1,9 @@
+
+node_modules
+EMAIL_SETUP.md
+node_modules
+dist
+*env*
+package-lock.json
+README.md
+sessoesAtivas.js
