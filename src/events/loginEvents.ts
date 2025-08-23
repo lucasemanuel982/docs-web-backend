@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/User.js';
 import { PasswordReset } from '../models/PasswordReset.js';
-import { adicionarSessao, removerSessao, obterSocketId, obterTodasSessoes } from '../utils/sessoesAtivas.ts'
+import { adicionarSessao, removerSessao, obterSocketId, obterTodasSessoes } from '../utils/sessoesAtivas.js'
 import { LoginRequest, RegisterRequest, JWTPayload } from '../types/index.js';
 import { validateBase64Image } from '../utils/imageValidation.js';
 

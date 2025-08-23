@@ -10,7 +10,7 @@ import { registrarEventosLogin } from './events/loginEvents.js';
 import { registrarEventosRecuperacaoSenha } from './events/passwordRecoveryEvents.js';
 import { registroEventoDocumento } from './events/documentEvents.js';
 import { registrarEventosPerfil } from './events/profileEvents.js';
-import { desconectarTodasSessoes, removerSessao, obterTodasSessoes } from './utils/sessoesAtivas.ts';
+import { desconectarTodasSessoes, removerSessao, obterTodasSessoes } from './utils/sessoesAtivas.js';
 import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import documentRoutes from './routes/documentRoutes.js';
@@ -90,15 +90,15 @@ app.get('/health', (req, res) => {
 app.post('/api/admin/clear-sessions', (req, res) => {
   try {
     desconectarTodasSessoes(io);
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       message: 'Todas as sessões foram desconectadas e limpas',
       timestamp: new Date().toISOString()
     });
   } catch (error) {
     console.error('Erro ao limpar sessões:', error);
-    res.status(500).json({ 
-      success: false, 
+    res.status(500).json({
+      success: false,
       message: 'Erro ao limpar sessões',
       error: error instanceof Error ? error.message : 'Erro desconhecido'
     });
@@ -109,16 +109,16 @@ app.post('/api/admin/clear-sessions', (req, res) => {
 app.get('/api/admin/sessions', (req, res) => {
   try {
     const sessoes = obterTodasSessoes();
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       sessions: Array.from(sessoes.entries()),
       count: sessoes.size,
       timestamp: new Date().toISOString()
     });
   } catch (error) {
     console.error('Erro ao obter sessões:', error);
-    res.status(500).json({ 
-      success: false, 
+    res.status(500).json({
+      success: false,
       message: 'Erro ao obter sessões',
       error: error instanceof Error ? error.message : 'Erro desconhecido'
     });
@@ -130,25 +130,25 @@ if (process.env.NODE_ENV === 'development') {
   app.post('/api/test-email', async (req, res) => {
     try {
       const { email } = req.body;
-      
+
       if (!email) {
-        return res.status(400).json({ 
-          success: false, 
-          message: 'Email é obrigatório' 
+        return res.status(400).json({
+          success: false,
+          message: 'Email é obrigatório'
         });
       }
 
       const { sendPasswordResetEmail } = await import('./utils/email.js');
       await sendPasswordResetEmail(email, 'test-token-123');
-      
-      res.json({ 
-        success: true, 
-        message: 'Email de teste enviado com sucesso!' 
+
+      res.json({
+        success: true,
+        message: 'Email de teste enviado com sucesso!'
       });
     } catch (error) {
       console.error('Erro ao enviar email de teste:', error);
-      res.status(500).json({ 
-        success: false, 
+      res.status(500).json({
+        success: false,
         message: 'Erro ao enviar email de teste',
         error: error instanceof Error ? error.message : 'Erro desconhecido'
       });
@@ -161,11 +161,11 @@ servidorHttp.listen(porta, () => {
   console.log(`Servidor rodando na porta ${porta}`);
   console.log(`Socket.IO configurado`);
   console.log(`CORS habilitado para: ${process.env.CLIENT_URL || "http://localhost:3000"}`);
-  
+
   // Mostrar status do serviço de email
   const smtpUser = process.env.SMTP_USER;
   const smtpPass = process.env.SMTP_PASS;
-  
+
   if (smtpUser && smtpPass) {
     console.log(`Serviço de email configurado: ${smtpUser}`);
   } else {

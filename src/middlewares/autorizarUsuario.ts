@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { Socket } from 'socket.io';
-import { adicionarSessao, removerSessao, obterSocketId } from '../utils/sessoesAtivas.ts';
+import { adicionarSessao, removerSessao, obterSocketId } from '../utils/sessoesAtivas.js';
 import { JWTPayload, SocketWithAuth } from '../types/index.js';
 
 export function autorizarUsuario(socket: SocketWithAuth, next: (err?: Error) => void): void {
