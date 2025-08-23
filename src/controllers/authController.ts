@@ -48,7 +48,7 @@ import jwt from 'jsonwebtoken';
 import { Request, Response } from 'express';
 import { User } from '../models/User.js';
 import { PasswordReset } from '../models/PasswordReset.js';
-import { adicionarSessao, removerSessao, obterSocketId, obterTodasSessoes } from '../utils/sessoesAtivas.ts';
+import { adicionarSessao, removerSessao, obterSocketId, obterTodasSessoes } from '../utils/sessoesAtivas.js';
 import { LoginRequest, RegisterRequest, JWTPayload, ApiResponse } from '../types/index.js';
 import { validateBase64Image } from '../utils/imageValidation.js';
 import { sendPasswordResetEmail } from '../utils/email.js';
@@ -62,9 +62,9 @@ export const login = async (req: Request, res: Response) => {
     const usuario = await User.findOne({ email });
 
     if (!usuario) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Email ou senha incorretos' 
+      return res.status(401).json({
+        success: false,
+        message: 'Email ou senha incorretos'
       });
     }
 
@@ -72,9 +72,9 @@ export const login = async (req: Request, res: Response) => {
     const senhaValida = await bcrypt.compare(password, usuario.password);
 
     if (!senhaValida) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Email ou senha incorretos' 
+      return res.status(401).json({
+        success: false,
+        message: 'Email ou senha incorretos'
       });
     }
 
@@ -114,9 +114,9 @@ export const login = async (req: Request, res: Response) => {
     res.status(200).json(response);
   } catch (erro) {
     console.error('Erro no processo de login:', erro);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Erro interno do servidor' 
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
     });
   }
 };
@@ -128,9 +128,9 @@ export const register = async (req: Request, res: Response) => {
     // Verificar se o usuário já existe
     const usuarioExistente = await User.findOne({ email });
     if (usuarioExistente) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Email já cadastrado' 
+      return res.status(400).json({
+        success: false,
+        message: 'Email já cadastrado'
       });
     }
 
@@ -138,9 +138,9 @@ export const register = async (req: Request, res: Response) => {
     if (profileImage && profileImage.trim() !== '') {
       const validationResult = validateBase64Image(profileImage);
       if (!validationResult.isValid) {
-        return res.status(400).json({ 
-          success: false, 
-          message: validationResult.error || 'Imagem de perfil inválida' 
+        return res.status(400).json({
+          success: false,
+          message: validationResult.error || 'Imagem de perfil inválida'
         });
       }
     }
@@ -196,9 +196,9 @@ export const register = async (req: Request, res: Response) => {
     res.status(201).json(response);
   } catch (erro) {
     console.error('Erro no processo de registro:', erro);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Erro interno do servidor' 
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
     });
   }
 };
@@ -211,9 +211,9 @@ export const forgotPassword = async (req: Request, res: Response) => {
     const usuario = await User.findOne({ email });
     if (!usuario) {
       // Por segurança, não informamos se o email existe ou não
-      return res.status(200).json({ 
-        success: true, 
-        message: 'Email de recuperação enviado com sucesso!' 
+      return res.status(200).json({
+        success: true,
+        message: 'Email de recuperação enviado com sucesso!'
       });
     }
 
@@ -233,27 +233,27 @@ export const forgotPassword = async (req: Request, res: Response) => {
     try {
       // Enviar email
       await sendPasswordResetEmail(email, resetToken);
-      
-      res.status(200).json({ 
-        success: true, 
-        message: 'Email de recuperação enviado com sucesso!' 
+
+      res.status(200).json({
+        success: true,
+        message: 'Email de recuperação enviado com sucesso!'
       });
     } catch (emailError) {
       console.error('Erro ao enviar email:', emailError);
-      
+
       // Se falhar ao enviar email, remover o token do banco
       await PasswordReset.deleteOne({ email, token: resetToken });
-      
-      res.status(500).json({ 
-        success: false, 
-        message: 'Erro ao enviar email de recuperação. Tente novamente.' 
+
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao enviar email de recuperação. Tente novamente.'
       });
     }
   } catch (erro) {
     console.error('Erro no processo de recuperação de senha:', erro);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Erro interno do servidor' 
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
     });
   }
 };
@@ -270,18 +270,18 @@ export const resetPassword = async (req: Request, res: Response) => {
     });
 
     if (!passwordReset) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Token inválido ou expirado' 
+      return res.status(400).json({
+        success: false,
+        message: 'Token inválido ou expirado'
       });
     }
 
     // Buscar usuário
     const usuario = await User.findOne({ email: passwordReset.email });
     if (!usuario) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Usuário não encontrado' 
+      return res.status(400).json({
+        success: false,
+        message: 'Usuário não encontrado'
       });
     }
 
@@ -305,15 +305,15 @@ export const resetPassword = async (req: Request, res: Response) => {
       // Não falhar a operação se o email de confirmação falhar
     }
 
-    res.status(200).json({ 
-      success: true, 
-      message: 'Senha redefinida com sucesso!' 
+    res.status(200).json({
+      success: true,
+      message: 'Senha redefinida com sucesso!'
     });
   } catch (erro) {
     console.error('Erro no processo de redefinição de senha:', erro);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Erro interno do servidor' 
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
     });
   }
 };
@@ -321,21 +321,21 @@ export const resetPassword = async (req: Request, res: Response) => {
 export const logout = async (req: Request, res: Response) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
-    
+
     if (token) {
       removerSessao(token);
       console.log('Usuário deslogado - sessão removida:', token);
     }
 
-    res.status(200).json({ 
-      success: true, 
-      message: 'Logout realizado com sucesso' 
+    res.status(200).json({
+      success: true,
+      message: 'Logout realizado com sucesso'
     });
   } catch (erro) {
     console.error('Erro no processo de logout:', erro);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Erro interno do servidor' 
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
     });
   }
 };
@@ -343,11 +343,11 @@ export const logout = async (req: Request, res: Response) => {
 export const verifySession = async (req: Request, res: Response) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
-    
+
     if (!token) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Token não fornecido' 
+      return res.status(401).json({
+        success: false,
+        message: 'Token não fornecido'
       });
     }
 
@@ -356,18 +356,18 @@ export const verifySession = async (req: Request, res: Response) => {
     }
     // Verificar se o token é válido
     const decoded = jwt.verify(token, process.env.JWT_SECRET) as JWTPayload;
-    
+
     // Buscar usuário atualizado
     const usuario = await User.findById(decoded.userId);
     if (!usuario) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Usuário não encontrado' 
+      return res.status(401).json({
+        success: false,
+        message: 'Usuário não encontrado'
       });
     }
 
-    res.status(200).json({ 
-      success: true, 
+    res.status(200).json({
+      success: true,
       data: {
         user: {
           id: usuario._id.toString(),
@@ -381,9 +381,9 @@ export const verifySession = async (req: Request, res: Response) => {
     });
   } catch (erro) {
     console.error('Erro na verificação de sessão:', erro);
-    res.status(401).json({ 
-      success: false, 
-      message: 'Token inválido ou expirado' 
+    res.status(401).json({
+      success: false,
+      message: 'Token inválido ou expirado'
     });
   }
 }; 
