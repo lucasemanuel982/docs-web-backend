@@ -21,7 +21,7 @@ export function registrarEventosLogin(socket: Socket, io: SocketIOServer): void 
         socketAnterior.emit('aviso_redirecionamento', {
           mensagem: 'Você será redirecionado porque sua conta foi acessada em outra página.'
         });
-        
+
         // Aguarda um tempo para o usuário ver a mensagem antes de desconectar
         setTimeout(() => {
           socketAnterior.emit('sessao_duplicada');
@@ -67,14 +67,18 @@ export function registrarEventosLogin(socket: Socket, io: SocketIOServer): void 
         exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) // 24 horas
       };
 
-      const tokenJWT = jwt.sign(payload, process.env.JWT_SECRET || 'fallback_secret');
+      if (!process.env.JWT_SECRET) {
+        throw new Error('JWT_SECRET não está definido nas variáveis de ambiente');
+      }
+      const tokenJWT = jwt.sign(payload, process.env.JWT_SECRET);
+
 
       // Adiciona a nova sessão
       console.log("socket.id", socket.id)
       adicionarSessao(tokenJWT, socket.id);
 
 
-      socket.emit('autenticacao_sucesso', { 
+      socket.emit('autenticacao_sucesso', {
         token: tokenJWT,
         user: {
           id: usuario._id.toString(),
@@ -136,12 +140,15 @@ export function registrarEventosLogin(socket: Socket, io: SocketIOServer): void 
         exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) // 24 horas
       };
 
-      const tokenJWT = jwt.sign(payload, process.env.JWT_SECRET || 'fallback_secret');
+      if (!process.env.JWT_SECRET) {
+        throw new Error('JWT_SECRET não está definido nas variáveis de ambiente');
+      }
+      const tokenJWT = jwt.sign(payload, process.env.JWT_SECRET);
 
       // Adiciona a nova sessão
       adicionarSessao(tokenJWT, socket.id);
 
-      socket.emit('registro_sucesso', { 
+      socket.emit('registro_sucesso', {
         message: 'Usuário registrado com sucesso',
         token: tokenJWT,
         user: {

@@ -9,7 +9,10 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
   }
   const token = authHeader.split(' ')[1];
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret') as JWTPayload;
+    if (!process.env.JWT_SECRET) {
+      throw new Error('JWT_SECRET não está definido nas variáveis de ambiente');
+    }
+    const payload = jwt.verify(token, process.env.JWT_SECRET) as JWTPayload;
     req.user = payload;
     next();
   } catch (err) {

@@ -88,7 +88,10 @@ export const login = async (req: Request, res: Response) => {
       exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) // 24 horas
     };
 
-    const tokenJWT = jwt.sign(payload, process.env.JWT_SECRET || 'fallback_secret');
+    if (!process.env.JWT_SECRET) {
+      throw new Error('JWT_SECRET não está definido nas variáveis de ambiente');
+    }
+    const tokenJWT = jwt.sign(payload, process.env.JWT_SECRET);
 
 
 
@@ -167,7 +170,10 @@ export const register = async (req: Request, res: Response) => {
       exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) // 24 horas
     };
 
-    const tokenJWT = jwt.sign(payload, process.env.JWT_SECRET || 'fallback_secret');
+    if (!process.env.JWT_SECRET) {
+      throw new Error('JWT_SECRET não está definido nas variáveis de ambiente');
+    }
+    const tokenJWT = jwt.sign(payload, process.env.JWT_SECRET);
 
 
 
@@ -345,8 +351,11 @@ export const verifySession = async (req: Request, res: Response) => {
       });
     }
 
+    if (!process.env.JWT_SECRET) {
+      throw new Error('JWT_SECRET não está definido nas variáveis de ambiente');
+    }
     // Verificar se o token é válido
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret') as JWTPayload;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as JWTPayload;
     
     // Buscar usuário atualizado
     const usuario = await User.findById(decoded.userId);

@@ -11,7 +11,10 @@ export function autorizarUsuario(socket: SocketWithAuth, next: (err?: Error) => 
   }
 
   try {
-    const payloadToken = jwt.verify(tokenJwt, process.env.JWT_SECRET || 'fallback_secret') as JWTPayload;
+    if (!process.env.JWT_SECRET) {
+      throw new Error('JWT_SECRET não está definido nas variáveis de ambiente');
+    }
+    const payloadToken = jwt.verify(tokenJwt, process.env.JWT_SECRET) as JWTPayload;
 
     // Verifica se já existe uma sessão ativa
     const socketIdAnterior = obterSocketId(tokenJwt);
@@ -24,7 +27,7 @@ export function autorizarUsuario(socket: SocketWithAuth, next: (err?: Error) => 
         socketAnterior.emit('aviso_redirecionamento', {
           mensagem: 'Você será redirecionado porque sua conta foi acessada em outra página.'
         });
-        
+
         // Aguarda um tempo para o usuário ver a mensagem antes de desconectar
         setTimeout(() => {
           socketAnterior.emit('deslogar_usuario');
