@@ -16,9 +16,7 @@
     "sourceMap": true,
     "resolveJsonModule": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
+    "emitDecoratorMetadata": true
   },
   "include": [
     "src/**/*"
