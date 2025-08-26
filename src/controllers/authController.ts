@@ -151,13 +151,31 @@ export const register = async (req: Request, res: Response) => {
     const saltRounds = 10;
     const senhaCriptografada = await bcrypt.hash(password, saltRounds);
 
+    // Verifica se já existe algum usuário para a empresa
+    const usuariosEmpresa = await User.findOne({ empresa });
+
+    let tipoUsuario = 'user';
+    let permissions = undefined;
+    if (!usuariosEmpresa) {
+      tipoUsuario = 'principal';
+      permissions = {
+        canCreateDocuments: true,
+        canEditProfile: true,
+        canReadDocuments: true,
+        canEditDocuments: true,
+        canChangeUserTipo: true
+      };
+    }
+
     // Criar novo usuário
     const novoUsuario = new User({
       name,
       email,
       empresa,
       password: senhaCriptografada,
-      profileImage
+      profileImage,
+      tipoUsuario,
+      permissions
     });
 
     await novoUsuario.save();
@@ -387,4 +405,4 @@ export const verifySession = async (req: Request, res: Response) => {
       message: 'Token inválido ou expirado'
     });
   }
-}; 
+};
