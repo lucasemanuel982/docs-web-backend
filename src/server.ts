@@ -82,8 +82,8 @@ io.of('/').on('connection', (socket) => {
 });
 
 // Rotas da API
-app.get('/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+app.get('/ping', (req, res) => {
+  res.json({ status: 'pong', timestamp: new Date().toISOString() });
 });
 
 // Endpoint para limpar todas as sessões ativas
