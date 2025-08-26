@@ -5,6 +5,5 @@ node_modules
 dist
 *env*
 package-lock.json
-README.md
 sessoesAtivas.js
 alterações futuras.txt
