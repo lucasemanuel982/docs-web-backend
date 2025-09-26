@@ -23,6 +23,12 @@ const porta = process.env.PORT || 3333;
 app.use(cors());
 app.use(express.json({ limit: '1mb' }));
 
+// Middleware para garantir que todas as respostas sejam JSON
+app.use((req, res, next) => {
+  res.setHeader('Content-Type', 'application/json');
+  next();
+});
+
 // Conectar ao banco de dados
 connectToDatabase();
 
@@ -155,6 +161,25 @@ if (process.env.NODE_ENV === 'development') {
     }
   });
 }
+
+// Middleware de tratamento de erros global
+app.use((error: any, req: any, res: any, next: any) => {
+  console.error('Erro não tratado:', error);
+  res.status(500).json({
+    success: false,
+    message: 'Erro interno do servidor',
+    error: process.env.NODE_ENV === 'development' ? error.message : 'Erro interno'
+  });
+});
+
+// Middleware para rotas não encontradas
+app.use('*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Rota não encontrada',
+    path: req.originalUrl
+  });
+});
 
 // Iniciar servidor
 servidorHttp.listen(porta, () => {

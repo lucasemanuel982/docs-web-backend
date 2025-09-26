@@ -6,7 +6,20 @@ import { User } from '../models/User.js';
 // Listar documentos do usuário autenticado
 export async function getUserDocuments(req: Request, res: Response) {
   try {
+    console.log('getUserDocuments - Usuário:', (req as any).user);
+    
     const userId = (req as any).user?.userId || (req as any).userId;
+    
+    if (!userId) {
+      console.error('getUserDocuments - userId não encontrado');
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Usuário não autenticado' 
+      });
+    }
+
+    console.log('getUserDocuments - Buscando documentos para userId:', userId);
+    
     const documents = await Document.find({
       $or: [
         { ownerId: userId },
@@ -15,6 +28,8 @@ export async function getUserDocuments(req: Request, res: Response) {
         { editPermissions: userId }
       ]
     });
+
+    console.log('getUserDocuments - Documentos encontrados:', documents.length);
 
     // Buscar dados dos proprietários
     const ownerIds = [...new Set(documents.map(doc => doc.ownerId))];
@@ -38,9 +53,19 @@ export async function getUserDocuments(req: Request, res: Response) {
         };
       }
     });
-    res.json({ documents: documentsWithOwner });
+    
+    console.log('getUserDocuments - Retornando documentos com proprietários');
+    res.json({ 
+      success: true,
+      documents: documentsWithOwner 
+    });
   } catch (err) {
-    res.status(500).json({ message: 'Erro ao buscar documentos', error: err });
+    console.error('getUserDocuments - Erro:', err);
+    res.status(500).json({ 
+      success: false,
+      message: 'Erro ao buscar documentos', 
+      error: err instanceof Error ? err.message : 'Erro desconhecido'
+    });
   }
 }
 
