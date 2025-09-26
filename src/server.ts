@@ -82,7 +82,7 @@ io.of('/').on('connection', (socket) => {
 });
 
 // Rotas da API
-app.get('/ping', (req, res) => {
+app.get('/api/ping', (req, res) => {
   res.json({ status: 'pong', timestamp: new Date().toISOString() });
 });
 
